@@ -5,6 +5,7 @@
 import win32gui
 import win32api
 import win32con
+import pyautogui
 import time
 import random
 
@@ -94,21 +95,6 @@ def leftclickXY(handle, x_position, y_position):
     return x_position, y_position
 
 
-def leftclickXY_mock(handle, x_position, y_position):
-    """
-    鼠标移动到指定位置，使用XY坐标，并且使用更高的模拟层次模拟鼠标点击 (pyAutoGui)
-    :param handle: 需要操作的句柄
-    :param x_position: 点击的横坐标
-    :param y_position: 点击的纵坐标
-    :return:
-    """
-    x_position = int(x_position)
-    y_position = int(y_position)
-    long_position = win32api.MAKELONG(x_position, y_position)
-    win32gui.SendMessage(handle, win32con.WM_MOUSEMOVE, 0, long_position)
-    return x_position, y_position
-
-
 class Window:
     hwnd = 0
     first_hwnd = 0  # 这个是用来标识顶层父窗口的。只有顶层父窗口凯能用于置顶 setTop
@@ -171,7 +157,16 @@ class Window:
         random_y = int(random_y)
         result_x = point_x + random.randint(0, random_x)
         result_y = point_y + random.randint(0, random_y)
-        result_x, result_y = leftclickXY(handle=self.hwnd, x_position=result_x, y_position=result_y)
+        if full_mock:
+            self.setTop()
+            left, top, _, _ = win32gui.GetWindowRect(self.hwnd)
+            result_x += left
+            result_y += top
+            pyautogui.click(result_x, result_y, interval=0.2)
+            # 不搞还原非置顶。因为制定相比于鼠标点击，是有延迟的。容易鼠标点了却还没置顶
+            # self.resetNotop()
+        else:
+            result_x, result_y = leftclickXY(handle=self.hwnd, x_position=result_x, y_position=result_y)
         return result_x, result_y
 
     def highLight(self):
