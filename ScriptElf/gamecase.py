@@ -164,7 +164,7 @@ class MyGameCase:
             random_x = int(feature.randomtuple[0] * self.findpic_helper.width)
             random_y = int(feature.randomtuple[1] * self.findpic_helper.height)
         result = {
-            "intx": intx, "inty": inty, "threshold": threshold,
+            "intx": intx, "inty": inty, "threshold": _,
             "point_x": point_x, "point_y": point_y, "random_x": random_x, "random_y": random_y,
         }
         if intx >= 0 and inty >= 0:
