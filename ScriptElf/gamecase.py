@@ -31,6 +31,10 @@ class FeaturePic:
             self.threshold = kwargs["threshold"]
         if "save_feature" in kwargs:
             self.save_feature = kwargs["save_feature"]
+        if "is_gray" in kwargs:
+            self.is_gray = kwargs["is_gray"]
+        else:
+            self.is_gray = True
         pass
 
 
@@ -107,12 +111,13 @@ class MyGameCase:
     def save_log(self, info):
         return
 
-    def find_feature(self, sub_image_path, subsize_tuple=None, save_feature=None, threshold=0.95):
+    def find_feature(self, sub_image_path, subsize_tuple=None, save_feature=None, threshold=0.95, is_gray=True):
         """
         :param sub_image_path:
         :param subsize_tuple: 左上右下的倍率。原图为(0, 0, 1, 1)
         :param save_feature: `str` 如果为非None值，且特征图用的是全图挖块，那么会往该参数对应的图片路径保存挖块出来的特征图
         :param threshold: 相似值
+        :param is_gray: `bool` 是否使用灰度图查找
         :return:
         """
         if not subsize_tuple:
@@ -134,11 +139,12 @@ class MyGameCase:
             # 上到下, 左到右.
             sub_image = sub_image[subsize[1]:subsize[3], subsize[0]:subsize[2]]
             if save_feature:
-                im = Image.fromarray(sub_image)
+                sub_image_rgb = cv2.cvtColor(sub_image, cv2.COLOR_BGR2RGB)
+                im = Image.fromarray(sub_image_rgb)
                 im.save(save_feature)
         int_x, int_y, threshold_real = findpic.find_sub_pic(
             resized, *subsize,
-            template=sub_image, threshold=threshold)
+            template=sub_image, threshold=threshold, is_gray=is_gray)
         if int_x >= 0:
             int_x += int(subsize_tuple[0] * self.base_size["width"])
         if int_y >= 0:
@@ -148,8 +154,10 @@ class MyGameCase:
     def check_feature(self, feature: FeaturePic):
         threshold = feature.__dict__.get("threshold", 0.95)
         save_feature = feature.__dict__.get("save_feature")
+        is_gray = feature.__dict__.get("is_gray", True)
         intx, inty, _ = self.find_feature(
-            sub_image_path=feature.path, subsize_tuple=feature.sizetuple, save_feature=save_feature, threshold=threshold
+            sub_image_path=feature.path, subsize_tuple=feature.sizetuple,
+            save_feature=save_feature, threshold=threshold, is_gray=is_gray
         )
         if not feature.clicktuple:
             point_x = intx

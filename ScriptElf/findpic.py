@@ -23,6 +23,8 @@ def get_cv2_numpy_image_from_file(filepath, cv2_imreadmodes=cv2.IMREAD_UNCHANGED
     filepath = os.path.abspath(filepath)
     if os.path.isfile(filepath):
         result = cv2.imread(filepath, cv2_imreadmodes)
+        # 由于opencv读取图像是默认GBR读取，所以存取时按照RGB存放则会变绿
+        result = cv2.cvtColor(result, cv2.COLOR_BGR2RGB)
         # print(filepath)
     return result
 
@@ -45,7 +47,7 @@ def get_cv2_numpy_image_from_PyCBitmap(PyCBitmap_Object):
     return numpy_image
 
 
-def find_sub_pic(source_image, left, top, right, bottom, template, threshold=0.9):
+def find_sub_pic(source_image, left, top, right, bottom, template, threshold=0.9, is_gray=True):
     """
     详情可查看https://www.jianshu.com/p/c20adfa72733，这篇文章写得不错
     匹配模式的问题可以看https://blog.csdn.net/coroutines/article/details/78229105
@@ -57,6 +59,7 @@ def find_sub_pic(source_image, left, top, right, bottom, template, threshold=0.9
     :param bottom: <int> 大图要截的下坐标
     :param template: <numpy> 要匹配的小图，即找的模板图
     :param threshold: <float> 匹配相似度，一定要匹配到一定程度了我们才返回值，越接近1越匹配，越接近-1越不匹配
+    :param is_gray: <bool> 是否使用灰度图。使用的话性能会提高，不使用的话可以识别特定颜色
     :return: x:int, y:int, max_val:float 返回的最匹配的位置的左上角坐标，如果没有满足足够匹配度的点，则返回 -1,-1。并且返回相似度
     """
     left = int(left)
@@ -66,11 +69,14 @@ def find_sub_pic(source_image, left, top, right, bottom, template, threshold=0.9
     # 根据输入，获取要处理的大图。
     # 注意，此处是先高度后宽度。numpy存储图片的方式是[y,x,c]
     target = source_image[top:bottom, left:right]
-    target_gray = cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)
-    template_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
-
     # 执行模板匹配，采用的匹配方式cv2.TM_CCOEFF_NORMED，归一化相关系数匹配。即做相关系数匹配后会自动归一化(-1,1)
-    result = cv2.matchTemplate(target_gray, template_gray, cv2.TM_CCOEFF_NORMED)
+    if is_gray:
+        # 转换为灰度图
+        target_gray = cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)
+        template_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
+        result = cv2.matchTemplate(target_gray, template_gray, cv2.TM_CCOEFF_NORMED)
+    else:
+        result = cv2.matchTemplate(target, template, cv2.TM_CCOEFF_NORMED)
     # 寻找矩阵（一维数组当做向量，用Mat定义）中的最大值和最小值的匹配结果及其位置
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
     # 不同匹配模式需要看的值不同，详情见上面的文章。此处归一化相关系数匹配，越接近1越匹配，越接近-1越不匹配
