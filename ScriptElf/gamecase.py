@@ -139,8 +139,8 @@ class MyGameCase:
             # 上到下, 左到右.
             sub_image = sub_image[subsize[1]:subsize[3], subsize[0]:subsize[2]]
             if save_feature:
-                sub_image_rgb = cv2.cvtColor(sub_image, cv2.COLOR_BGR2RGB)
-                im = Image.fromarray(sub_image_rgb)
+                # sub_image_rgb = cv2.cvtColor(sub_image, cv2.COLOR_BGR2RGB)
+                im = Image.fromarray(sub_image)
                 im.save(save_feature)
         int_x, int_y, threshold_real = findpic.find_sub_pic(
             resized, *subsize,
