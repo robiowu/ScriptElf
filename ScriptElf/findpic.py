@@ -129,10 +129,23 @@ class FindPictureHelper:
         # 屏幕缩放比例
         self.dpi_multi = dpi_multi
         self.handle = winhandle
-        # left, top, right, bottom = win32gui.GetWindowRect(winhandle)
         left, top, right, bottom = win32gui.GetClientRect(winhandle)
+        left, top = win32gui.ClientToScreen(winhandle, (left, top))
+        right, bottom = win32gui.ClientToScreen(winhandle, (right, bottom))
+        self.client_rect = (left, top, right, bottom)
         self.width = right - left
         self.height = bottom - top
+        if (left, top, right, bottom) != win32gui.GetWindowRect(winhandle):
+            temp = win32gui.GetWindowRect(winhandle)
+            self.left_border = left - temp[0]
+            self.top_border = top - temp[1]
+            self.right_border = temp[2] - right
+            self.bottom_border = temp[3] - bottom
+        else:
+            self.left_border = 0
+            self.top_border = 0
+            self.right_border = 0
+            self.bottom_border = 0
         # 返回句柄窗口的设备环境，覆盖整个窗口，包括非客户区，标题栏，菜单，边框
         self.hwnd_DC = win32gui.GetWindowDC(winhandle)
         # 通过hwndDC获得mfcDC(注意主窗口用的是win32gui库，操作位图截图是用win32ui库)
