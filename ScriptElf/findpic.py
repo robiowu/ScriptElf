@@ -129,7 +129,8 @@ class FindPictureHelper:
         # 屏幕缩放比例
         self.dpi_multi = dpi_multi
         self.handle = winhandle
-        left, top, right, bottom = win32gui.GetWindowRect(winhandle)
+        # left, top, right, bottom = win32gui.GetWindowRect(winhandle)
+        left, top, right, bottom = win32gui.GetClientRect(winhandle)
         self.width = right - left
         self.height = bottom - top
         # 返回句柄窗口的设备环境，覆盖整个窗口，包括非客户区，标题栏，菜单，边框
