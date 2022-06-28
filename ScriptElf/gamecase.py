@@ -142,6 +142,8 @@ class MyGameCase:
                 # sub_image_rgb = cv2.cvtColor(sub_image, cv2.COLOR_BGR2RGB)
                 im = Image.fromarray(sub_image)
                 im.save(save_feature)
+                im = Image.fromarray(resized[subsize[1]:subsize[3], subsize[0]:subsize[2]])
+                im.save(f"{save_feature}.main.bmp")
         int_x, int_y, threshold_real = findpic.find_sub_pic(
             resized, *subsize,
             template=sub_image, threshold=threshold, is_gray=is_gray)
