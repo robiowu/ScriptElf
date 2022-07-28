@@ -3,9 +3,9 @@ from setuptools import setup, find_packages
 
 setup(
     name="ScriptElf",
-    version="2.21",
+    version="2.22",
     description="robio's game elf",
-    license="MIT Licence",
+    license="GPL Licence",
 
     author="robiowu",
     packages=find_packages(),
