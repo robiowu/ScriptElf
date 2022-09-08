@@ -7,6 +7,7 @@ import cv2
 import win32gui
 import win32ui
 import win32con
+import win32api
 from PIL import Image
 import numpy
 import os
@@ -124,6 +125,7 @@ class FindPictureHelper:
     save_bit_map = None
     # 图片的numpy形式。因为openCV只接受numpy的输入
     numpy_image = None
+    dpi_multi = 1
 
     def __init__(self, winhandle, dpi_multi=1):
         # 屏幕缩放比例
@@ -133,8 +135,6 @@ class FindPictureHelper:
         left, top = win32gui.ClientToScreen(winhandle, (left, top))
         right, bottom = win32gui.ClientToScreen(winhandle, (right, bottom))
         self.client_rect = (left, top, right, bottom)
-        self.width = right - left
-        self.height = bottom - top
         if (left, top, right, bottom) != win32gui.GetWindowRect(winhandle):
             temp = win32gui.GetWindowRect(winhandle)
             self.left_border = left - temp[0]
@@ -146,6 +146,13 @@ class FindPictureHelper:
             self.top_border = 0
             self.right_border = 0
             self.bottom_border = 0
+        screen_x = win32api.GetSystemMetrics(win32con.SM_CXSCREEN)
+        screen_y = win32api.GetSystemMetrics(win32con.SM_CYSCREEN)
+        self.width = right - left
+        self.height = bottom - top
+        if not (0 <= left <= screen_x and 0 <= top <= screen_y and 0 <= right <= screen_x and 0 <= bottom <= screen_y):
+            self.width = int(self.width / self.dpi_multi)
+            self.height = int(self.height / self.dpi_multi)
         # 返回句柄窗口的设备环境，覆盖整个窗口，包括非客户区，标题栏，菜单，边框
         self.hwnd_DC = win32gui.GetWindowDC(winhandle)
         # 通过hwndDC获得mfcDC(注意主窗口用的是win32gui库，操作位图截图是用win32ui库)

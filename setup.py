@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="ScriptElf",
-    version="2.22",
+    version="2.23",
     description="robio's game elf",
     license="GPL Licence",
 
