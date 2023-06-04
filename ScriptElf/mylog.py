@@ -16,7 +16,7 @@ class Logger(object):
         'crit': logging.CRITICAL
     }
 
-    def __init__(self, filename,
+    def __init__(self, filename, savelog=True,
                  level='info', when='D',
                  backcount=3, fmt='%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s'):
         """
@@ -50,7 +50,8 @@ class Logger(object):
         th.setFormatter(format_str)
         # 把对象加到logger里
         self.logger.addHandler(sh)
-        self.logger.addHandler(th)
+        if savelog:
+            self.logger.addHandler(th)
 
 
 if __name__ == '__main__':

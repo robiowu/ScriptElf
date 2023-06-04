@@ -49,7 +49,7 @@ class MyGameCase:
     _log_dir = None
     _log_name = None
 
-    def __init__(self, hwnd, game_name, base_size: dict, dpi_multi=1):
+    def __init__(self, hwnd, game_name, base_size: dict, dpi_multi=1, savelog=False):
         """
         :param hwnd: `int` 窗口句柄
         :param game_name: `str` 游戏名
@@ -69,9 +69,9 @@ class MyGameCase:
         self._log_name = "%s[%d].log" % (game_name, hwnd)
         if not os.path.exists(self._log_dir):
             os.makedirs(self._log_dir)
-        self.__log_init(self._log_dir, self._log_name)
+        self.__log_init(self._log_dir, self._log_name, savelog)
 
-    def __log_init(self, log_abs_filepath, log_filename):
+    def __log_init(self, log_abs_filepath, log_filename, savelog: bool):
         """
         初始化log模块
         :param log_abs_filepath: <str> log保存的目录的绝对路径
@@ -79,7 +79,7 @@ class MyGameCase:
         :return:
         """
         filename = os.path.join(log_abs_filepath, log_filename)
-        self._log_helper = mylog.Logger(filename=filename, backcount=3)
+        self._log_helper = mylog.Logger(filename=filename, backcount=3, savelog=savelog)
         return
 
     def checkdir_char(self):
