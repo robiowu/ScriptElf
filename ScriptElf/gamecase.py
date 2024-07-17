@@ -37,6 +37,33 @@ class FeaturePic:
             self.is_gray = True
         pass
 
+    @staticmethod
+    def get_sizetuple(source_image: str, feature_image: str, _round: int = 3):
+        """
+        根据一个小图和一个大图，找出小图在大图中对应的比例
+        :param source_image: `str`
+        :param feature_image: `str`
+        :param _round: `int`
+        :return:
+        """
+        result = None
+        source_image = findpic.get_cv2_numpy_image_from_file(source_image)
+        feature_image = findpic.get_cv2_numpy_image_from_file(feature_image)
+
+        height, width, channels = source_image.shape
+        sub_height, sub_width, sub_channels = feature_image.shape
+
+        left, up, _ = findpic.find_sub_pic(
+            source_image=source_image, template=feature_image,
+            left=0, top=0, right=width, bottom=height, is_gray=False)
+        if left > 0:
+            result = list()
+            result.append(round(left / width, _round))
+            result.append(round(up / height, _round))
+            result.append(round((left + sub_width) / width, _round))
+            result.append(round((up + sub_height) / height, _round))
+        return result
+
 
 class MyGameCase:
     """用来控制每个游戏脚本的对应游戏基类"""

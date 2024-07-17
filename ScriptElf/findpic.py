@@ -39,7 +39,8 @@ def get_cv2_numpy_image_from_PyCBitmap(PyCBitmap_Object):
     numpy_image = None
     try:
         bmpinfo = PyCBitmap_Object.GetInfo()
-        bmp_array = numpy.asarray(PyCBitmap_Object.GetBitmapBits(), dtype=numpy.uint8)
+        bmp_array = numpy.frombuffer(PyCBitmap_Object.GetBitmapBits(True), dtype='uint8')
+        # bmp_array = numpy.asarray(PyCBitmap_Object.GetBitmapBits(True), dtype=numpy.uint8)
         pil_image = Image.frombuffer('RGB', (bmpinfo['bmWidth'], bmpinfo['bmHeight']), bmp_array, 'raw', 'BGRX', 0, 1)
         numpy_image = numpy.array(pil_image)
     except Exception as e:
@@ -150,7 +151,8 @@ class FindPictureHelper:
         screen_y = win32api.GetSystemMetrics(win32con.SM_CYSCREEN)
         self.width = right - left
         self.height = bottom - top
-        if not (0 <= left <= screen_x and 0 <= top <= screen_y and 0 <= right <= screen_x and 0 <= bottom <= screen_y):
+        # if not (0 <= left <= screen_x and 0 <= top <= screen_y and 0 <= right <= screen_x and 0 <= bottom <= screen_y):
+        if self.dpi_multi != 1:
             self.width = int(self.width / self.dpi_multi)
             self.height = int(self.height / self.dpi_multi)
         # 返回句柄窗口的设备环境，覆盖整个窗口，包括非客户区，标题栏，菜单，边框
@@ -187,7 +189,7 @@ class FindPictureHelper:
         """
         self.get_window_image()
         bmpinfo = self.save_bit_map.GetInfo()
-        bmp_array = numpy.asarray(self.save_bit_map.GetBitmapBits(), dtype=numpy.uint8)
+        bmp_array = numpy.frombuffer(self.save_bit_map.GetBitmapBits(True), dtype=numpy.uint8)
         pil_image = Image.frombuffer('RGB', (bmpinfo['bmWidth'], bmpinfo['bmHeight']), bmp_array, 'raw', 'BGRX', 0, 1)
         pil_image.save(filepath, format=format)
         return
