@@ -176,7 +176,9 @@ class FindPictureHelper:
         且开辟的空间指向的内存空间不变。因此下次调用该函数时只是单纯地拿到最新的屏幕缓存并且复写替换到我们开辟的空间中，此时不会发生内存泄漏
         :return:
         """
-        self.save_DC.BitBlt((0, 0), (self.width, self.height), self.mfc_DC, (0, 0), win32con.SRCCOPY)
+        # 因为客户区不一定是从(0, 0)开始的，因此要调整下截图的起点(self.left_border, self.top_border)
+        self.save_DC.BitBlt((0, 0), (self.width, self.height),
+                            self.mfc_DC, (self.left_border, self.top_border), win32con.SRCCOPY)
         self.numpy_image = get_cv2_numpy_image_from_PyCBitmap(PyCBitmap_Object=self.save_bit_map)
         return
 
