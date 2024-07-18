@@ -80,7 +80,8 @@ class MyGameCase:
         """
         :param hwnd: `int` 窗口句柄
         :param game_name: `str` 游戏名
-        :param base_size: `dict` 用来标定我们脚本运行状态下，期望的窗口大小。如 {"width": 540, "height": 960}
+        :param base_size: `dict` 用来标定我们脚本运行状态下，期望的客户区窗口大小。如 {"width": 540, "height": 960}
+        后续将会用来对窗口截图缩放到对应的base_size之后在进行图像匹配
         :param dpi_multi: `float` DPI值
         """
         self.hwnd = hwnd
