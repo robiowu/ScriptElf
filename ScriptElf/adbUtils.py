@@ -67,12 +67,15 @@ class AdbUtils:
         except subprocess.SubprocessError as e:
             return False, str(e)
 
-    @staticmethod
-    def get_physical_size(adb_output):
-        lines = adb_output.split("\n")
+    def get_physical_size(self):
+        wm_size = f"{self.adb} -s {self.device_id} shell wm size"
+        wm_size = subprocess.run(wm_size, capture_output=True, text=True, shell=True)
+        wm_size = wm_size.stdout
+        lines = wm_size.split("\n")
         for line in lines:
             if "Physical size:" in line:
-                return line.replace("Physical size: ", "").strip()
+                temp = line.replace("Physical size: ", "").strip()
+                return temp.split("x")
         return None
 
     def subprocess_run_print(self, command, std_out=True, std_err=True):
@@ -131,4 +134,5 @@ if __name__ == "__main__":
     ip = "127.0.0.1"
     port = "16448"
     a = AdbUtils(f"{ip}:{port}")
-    a.save_image("aaa.bmp")
+    w, h = a.get_physical_size()
+    print(f"{w} : {h}")
