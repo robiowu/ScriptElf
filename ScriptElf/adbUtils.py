@@ -75,7 +75,8 @@ class AdbUtils:
         for line in lines:
             if "Physical size:" in line:
                 temp = line.replace("Physical size: ", "").strip()
-                return temp.split("x")
+                width, height =  temp.split("x")
+                return int(width), int(height)
         return None
 
     def subprocess_run_print(self, command, std_out=True, std_err=True):
