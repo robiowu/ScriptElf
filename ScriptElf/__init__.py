@@ -3,4 +3,4 @@
 lib功能库
 """
 
-__all__ = ['findpic', 'gamecase', 'registryExt', 'system_cmd', 'winhandle', 'mylog']
+__all__ = ['findpic', 'gamecase', 'registryExt', 'system_cmd', 'winhandle', 'mylog', 'adbUtils']
