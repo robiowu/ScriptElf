@@ -6,7 +6,7 @@ from PIL import Image
 
 
 class AdbUtils:
-    def __init__(self, dev_id="", use_adb=True, app_name=None, activity_name=None):
+    def __init__(self, dev_id, use_adb=True, app_name=None, activity_name=None):
         if use_adb:
             self.adb = "adb"
 
