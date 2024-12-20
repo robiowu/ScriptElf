@@ -130,6 +130,9 @@ class AdbUtils:
                f"shell input tap {int(x)} {int(y)}")
         self.subprocess_run_print(command=cmd)
 
+    def scroll(self, x_begin, y_begin, x_end, y_end):
+  # 最后一个参数表示的是滑动时间，单位为毫秒
+        os.system(f"{self.adb} -s {self.device_id} shell input swipe {x_begin} {y_begin} {x_end} {y_end} 300")
 
 if __name__ == "__main__":
     ip = "127.0.0.1"
