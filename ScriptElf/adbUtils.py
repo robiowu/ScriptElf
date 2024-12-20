@@ -1,9 +1,9 @@
 import io
 import os
 import subprocess
+import numpy
+import cv2
 from PIL import Image
-
-
 
 class AdbUtils:
     def __init__(self, dev_id, use_adb=True, app_name=None, activity_name=None):
@@ -118,6 +118,12 @@ class AdbUtils:
         image = Image.open(io.BytesIO(image_bytes))
         return image
 
+    def get_opencv_image(self):
+        image = numpy.array(self.get_image())
+        if image.shape[2] == 4:
+            image = cv2.cvtColor(image, cv2.COLOR_RGBA2RGB)
+        return image
+
     def save_image(self, filepath):
         # 使用Pillow的Image.open读取图像
         image = self.get_image()
@@ -129,6 +135,7 @@ class AdbUtils:
                f"-s {self.device_id} "
                f"shell input tap {int(x)} {int(y)}")
         self.subprocess_run_print(command=cmd)
+        return x, y
 
     def scroll(self, x_begin, y_begin, x_end, y_end):
     # 最后一个参数表示的是滑动时间，单位为毫秒
