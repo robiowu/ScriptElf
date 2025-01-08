@@ -1,5 +1,6 @@
 import io
 import os
+import datetime
 import subprocess
 import numpy
 import cv2
@@ -15,10 +16,19 @@ class AdbUtils:
         self.app_name = app_name
         self.activity_name = activity_name
 
-    def print(self, string):
+    def print(self, string, timestamp=True):
         if "logger" in self.__dict__:
             self.logger.info(string)
         else:
+            if timestamp:
+                # 获取当前时间
+                now = datetime.datetime.now()
+
+                # 格式化时间戳，格式为：MM-DD HH:MM:SS
+                timestamp_prefix = now.strftime("%m-%d %H:%M:%S")
+
+                # 将时间戳作为前缀添加到字符串
+                string_with_prefix = f"[{timestamp_prefix}] {string}"
             print(string)
 
     def __connect_device__(self):
