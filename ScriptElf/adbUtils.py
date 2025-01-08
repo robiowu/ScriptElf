@@ -23,12 +23,10 @@ class AdbUtils:
             if timestamp:
                 # 获取当前时间
                 now = datetime.datetime.now()
-
                 # 格式化时间戳，格式为：MM-DD HH:MM:SS
                 timestamp_prefix = now.strftime("%m-%d %H:%M:%S")
-
                 # 将时间戳作为前缀添加到字符串
-                string_with_prefix = f"[{timestamp_prefix}] {string}"
+                string = f"[{timestamp_prefix}] {string}"
             print(string)
 
     def __connect_device__(self):
